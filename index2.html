@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>guess game</title>
+</head>
+<body>
+    <h1>guess the number yash</h1>
+    <form action="" id="form">
+        <input type="number" id="number" required>
+        <input type="submit" id="submit">
+    </form>
+    <p id="message"></p>
+    <script>
+        const form = document.getElementById("form");
+        let compNumb = Math.floor(Math.random()*100);
+
+        form.addEventListener('submit',function(event){
+            if(event)
+            {
+                event.preventDefault();
+
+            const userNumb = document.getElementById('number').value;
+            const msg = document.getElementById('message');
+             msg.innerText=" ";
+             document.getElementById('number').value='';
+
+            if(userNumb == compNumb)
+            {
+                msg.innerText="congratulations !! game has been reset";
+             compNumb = Math.floor(Math.random()*100);
+
+            }
+           else if(userNumb < compNumb)
+            {
+                msg.innerText="number is small !!";
+            }
+            if(userNumb > compNumb)
+            {
+                msg.innerText="number is greater !!";
+            }
+            }
+
+        })
+    </script>
+</body>
+</html>

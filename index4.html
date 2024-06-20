@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Speed Test</title>
+    <style>
+        *{
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+        }
+
+        body{
+            min-height: 100vh;
+            display: flex;
+            padding: 0 10px;
+            align-items: center;
+            justify-content: center;
+            background: hotpink; 
+        }
+        .wrapper{
+            width: 770px;
+            padding: 35px;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 10px 15px rgba(0, 0, 0, 0.5);
+        }
+        .wrapper .content-box{
+            padding: 13px 20px 0;
+            border-radius: 10px;
+            border: 1px solid white;
+        }
+        .wrapper .input-field{
+            padding:  13px 20px 0;
+            position: absolute;
+            opacity: 0;
+            z-index: -99;
+        }
+        .content-box .content{
+            margin-top: 17px;
+            display: flex;
+            padding: 12px 0;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+            border-top: 1px solid white;
+        }
+        .content-box .result-details{
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            width: calc(100% - 140px);
+        }
+        .result-details li{
+            display: flex;
+            height: 20px;
+            list-style: none;
+            align-items: center;
+        }
+        .content button{
+            outline: none;
+            border: none;
+            color: #fff;
+            background-color: hotpink;
+            padding: 8px 5px;
+            cursor: pointer;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        .content button:active{
+            transform: scale(0.97);
+        }
+        .typing-text p span{
+            position: relative;
+            font-size: larger;
+        }
+        .typing-text p span.active{
+            color: rgb(240, 148, 9);
+        }
+        .typing-text p span.correct{
+            color: green;
+        }
+        .typing-text p span.incorrect{
+            color: red;
+            outline: 1px solid #fff;
+            border-radius: 4px;
+        }
+        ::selection{
+            background-color: #fff;
+            color: hotpink;
+        }
+    </style>
+</head>
+<body>
+    <div class="wrapper">
+        <input type="text" class="input-field">
+        <div class="content-box">
+            <div class="typing-text">
+                <p></p>
+            </div>
+            <div class="content">
+                <ul class="result-details">
+                    <li class="time">
+                        <p>Time left:</p>
+                        <span><b>60</b></span>
+                    </li>
+                    <li class="mistake">
+                        <p>Mistakes:</p>
+                        <span>0</span>
+                    </li>
+                    <li class="wpm">
+                        <p>WPM:</p>
+                        <span>0</span>
+                    </li>
+                    <li class="cpm">
+                        <p>CPM:</p>
+                        <span>0</span>
+                    </li>
+                </ul>
+                <button>Try Again</button>
+            </div>
+        </div>
+    </div>
+    <script>
+        const typetext = document.querySelector('.typing-text p');
+        const input = document.querySelector('.wrapper .input-field');
+        const time = document.querySelector('.time span b');
+        const mistakes = document.querySelector('.mistake span');
+        const wpm = document.querySelector('.wpm span');
+        const cpm = document.querySelector('.cpm span');
+        const btn = document.querySelector('button');
+
+        let timer;
+        let maxtime = 60;
+        let timeleft = maxtime;
+        let charindex = 0;
+        let istyping = false;
+        let mistake = 0;
+
+        function loadParagraph() {
+            const paragraph = [
+    "The quick brown fox jumps over the lazy dog.",
+    "Pack my box with five dozen liquor jugs.",
+    "How razorback-jumping frogs can level six piqued gymnasts!",
+    "A wizard's job is to vex chumps quickly in fog.",
+    "Bright vixens jump; dozy fowl quack.",
+    "Jinxed wizards pluck ivy from the big quilt.",
+    "My faxed joke won a pager in the cable TV quiz show.",
+    "Crazy Fredrick bought many very exquisite opal jewels.",
+    "We promptly judged antique ivory buckles for the next prize.",
+    "Two driven jocks help fax my big quiz.",
+    "The five boxing wizards jump quickly.",
+    "How quickly daft jumping zebras vex.",
+    "Heavy boxes perform quick waltzes and jigs.",
+    "Zany jokes perplexed the witty crowd.",
+    "Glib jocks quiz nymph to vex dwarf.",
+    "Jellybeans are the best treats in the candy shop.",
+    "A dozen kittens were playing in the garden.",
+    "He puzzled over the complex math problem.",
+    "She swiftly solved the crossword puzzle.",
+    "The wizard waved his wand and cast a spell.",
+    "Bright lights illuminated the night sky.",
+    "Raindrops pattered against the windowpane.",
+    "The detective followed the mysterious clues.",
+    "She painted a beautiful landscape on the canvas.",
+    "The chef prepared a delicious gourmet meal.",
+    "The athlete trained rigorously for the marathon.",
+    "The musician composed a symphony in her studio.",
+    "The writer crafted an engaging novel.",
+    "The scientist conducted groundbreaking experiments.",
+    "The teacher inspired her students to learn.",
+    "The artist sculpted a masterpiece from marble.",
+    "The gardener tended to the blooming flowers.",
+    "The traveler explored distant lands and cultures.",
+    "The baker made fresh bread and pastries.",
+    "The librarian organized the books on the shelves.",
+    "The architect designed a modern skyscraper.",
+    "The engineer developed innovative technologies.",
+    "The programmer wrote code for the new app.",
+    "The entrepreneur launched a successful startup.",
+    "The pilot navigated the plane through turbulent skies.",
+    "The doctor treated patients with compassion.",
+    "The nurse provided excellent care to her patients.",
+    "The firefighter bravely rescued people from the fire.",
+    "The police officer protected the community.",
+    "The soldier served his country with honor.",
+    "The sailor navigated the vast oceans.",
+    "The astronaut explored the depths of space.",
+    "The farmer harvested crops from the fields.",
+    "The fisherman cast his net into the sea.",
+    "The hunter tracked animals through the forest.",
+    "The explorer discovered ancient ruins.",
+    "The mountaineer climbed to the summit.",
+    "The cyclist pedaled through scenic routes.",
+    "The runner sprinted to the finish line.",
+    "The swimmer swam laps in the pool.",
+    "The dancer performed gracefully on stage.",
+    "The actor delivered a captivating performance.",
+    "The director orchestrated a brilliant film.",
+    "The producer managed the production team.",
+    "The editor refined the manuscript for publication.",
+    "The publisher released the book to the public.",
+    "The agent represented the artist's interests.",
+    "The critic reviewed the latest movie.",
+    "The journalist reported on breaking news.",
+    "The photographer captured stunning images.",
+    "The designer created fashionable clothing.",
+    "The model showcased the latest trends.",
+    "The stylist curated a chic wardrobe.",
+    "The jeweler crafted exquisite jewelry.",
+    "The potter molded clay into beautiful pottery.",
+    "The blacksmith forged metal into tools.",
+    "The carpenter built sturdy furniture.",
+    "The plumber fixed the leaking pipe.",
+    "The electrician wired the new house.",
+    "The mechanic repaired the broken car.",
+    "The driver chauffeured the guests around town.",
+    "The janitor cleaned the office building.",
+    "The custodian maintained the school grounds.",
+    "The security guard patrolled the premises.",
+    "The receptionist greeted visitors at the front desk.",
+    "The secretary organized the executive's schedule.",
+    "The accountant balanced the financial books.",
+    "The banker approved the loan application.",
+    "The teller handled the customer's transaction.",
+    "The broker advised clients on investments.",
+    "The trader bought and sold stocks.",
+    "The analyst researched market trends.",
+    "The manager oversaw the project's progress.",
+    "The supervisor trained the new employees.",
+    "The executive made strategic business decisions.",
+    "The board member attended the quarterly meeting.",
+    "The shareholder received dividends from the company.",
+    "The investor funded the startup's growth.",
+    "The philanthropist donated generously to charity.",
+    "The volunteer helped at the community center.",
+    "The advocate campaigned for social justice.",
+    "The activist organized a peaceful protest.",
+    "The lawyer represented the client in court.",
+    "The judge presided over the trial.",
+    "The jury deliberated on the verdict."
+];
+
+
+            const randomIndex = Math.floor(Math.random() * paragraph.length);
+            typetext.innerHTML = '';
+            for (const char of paragraph[randomIndex]) {
+                typetext.innerHTML += `<span>${char}</span>`;
+            }
+            typetext.querySelectorAll('span')[0].classList.add('active');
+            document.addEventListener('keydown', () => input.focus());
+            typetext.addEventListener('click', () => {
+                input.focus();
+            });
+        }
+
+        function initTyping() {
+            const char = typetext.querySelectorAll('span');
+            const typedchar = input.value.charAt(charindex);
+            if (charindex < char.length && timeleft > 0) {
+                if (!istyping) {
+                    // Start the timer only once when typing starts
+                    timer = setInterval(initTime, 1000);
+                    istyping = true;
+                }
+                if (char[charindex].innerText === typedchar) {
+                    char[charindex].classList.add('correct');
+                } else {
+                    mistake++;
+                    char[charindex].classList.add('incorrect');
+                }
+                charindex++;
+                if (charindex < char.length) { // Check if next character exists before adding 'active'
+                    char[charindex].classList.add('active');
+                }
+                mistakes.innerText = mistake;
+                cpm.innerText = charindex - mistake;
+            } else {
+                clearInterval(timer); // Stop the timer when paragraph is finished
+                input.value = '';
+            }
+        }
+
+        function initTime() {
+            if (timeleft > 0) {
+                timeleft--;
+                time.innerText = timeleft;
+                // Correct WPM calculation
+                let wpmnum = Math.round(((charindex - mistake) / 5) / ((maxtime - timeleft) / 60));
+                wpm.innerText = wpmnum;
+            } else {
+                clearInterval(timer);
+                // When the time runs out, we ensure WPM is calculated one last time correctly
+                let wpmnum = Math.round(((charindex - mistake) / 5) / (maxtime / 60));
+                wpm.innerText = wpmnum;
+            }
+        }
+
+        function reset() {
+            loadParagraph();
+            clearInterval(timer);
+            timeleft = maxtime;
+            time.innerText = timeleft;
+            input.value = '';
+            charindex = 0;
+            istyping = false;
+            mistake = 0;
+            mistakes.innerText = 0;
+            wpm.innerText = 0;
+            cpm.innerText = 0;
+        }
+
+        input.addEventListener('input', initTyping);
+        btn.addEventListener('click', reset);
+
+        loadParagraph();
+    </script>
+</body>
+</html>

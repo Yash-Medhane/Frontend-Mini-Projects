@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mode change</title>
+    <style>
+        nav div{
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+        }
+        nav div ul{
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 30px;
+        }
+        nav div ul li{
+        list-style:none;
+        }
+
+        main{
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 40px;
+        }
+        main div{
+           
+            margin: 20px;
+        }
+        main div img{
+            width: 400px;
+            height: auto;
+        }
+        main div button{
+            color: white;
+            background-color: red;
+            border-radius: 10%;
+            border: none;
+            font-size: 20px;
+            cursor: pointer;
+        }
+        main div button:hover{
+            background-color: green;
+        }
+        .night{
+            background: #000;
+        }
+
+    </style>
+</head>
+<body class="body">
+    <nav>
+        <div>
+            <h1>Yash Medhane</h1>
+            <ul class="nav">
+                <li>Home</li>
+                <li>About</li>
+                <li>Skills</li>
+                <li>Contact</li>
+            </ul>
+        </div>
+    </nav>
+    <main>
+        <div class="content">
+            <h1>
+                yash medhane
+            </h1>
+            <p>Web Developer</p>
+            <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Expedita doloremque harum ut amet id fuga aliquid perferendis molestias quos placeat deserunt debitis sint velit qui inventore maxime culpa autem, optio eaque a. Recusandae, hic.</p>    
+            <button class="mode">Mode</button>
+        </div>
+        <div class="image">
+            <img src="html.png" alt="image">
+        </div>
+    </main>
+    <script>
+        const btn = document.getElementsByClassName("mode")[0];
+        const body = document.getElementsByClassName("body")[0];
+        let mode = 1;
+        btn.addEventListener('click',function(){
+                if(mode==1)
+                {
+                    body.classList.add("night");
+                    mode=0;
+                }
+                else
+                {
+                    body.classList.remove("night");
+                    mode=1;
+                }
+            }
+        )
+        
+    </script>
+</body>
+</html>
